@@ -1,7 +1,7 @@
 ## fastapi 실행
 from fastapi import FastAPI
 from pydantic import BaseModel
-from restaurant_filter import RestaurantFilter
+from backend.app.restaurant_filter import RestaurantFilter
 
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
@@ -31,6 +31,7 @@ class FilterRequest(BaseModel):
 
 @app.post("/filter_restaurants/")
 async def filter_restaurants(request: FilterRequest):
+    print("Received data: ", request)
     """
     1차 필터링 (카테고리 기반) → 운영 시간 필터링 → 2차 필터링 (세부사항 기반)
     """

@@ -5,7 +5,7 @@ import os
 import re
 from dotenv import load_dotenv
 
-from database import get_db_connection
+from backend.app.database import get_db_connection
 from backend.Constants import FACILITIES, PARKING, VERY_GOOD, SEATS, TAG_GROUPS
 # .env 파일 로딩하여 OpenAI API Key 가져오기
 load_dotenv()

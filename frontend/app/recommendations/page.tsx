@@ -10,68 +10,70 @@ const RecommendationsPage = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState<any>(null); // 🔥 Selected restaurant for popup
   const [searchHistory, setSearchHistory] = useState<string>("");
   const router = useRouter();
-  const [selectedKeyword, setSelectedKeyword] = useState<any[]>([]);
+  const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
+  const API_URL = process.env.NEXT_PUBLIC_API; // 환경 변수에서 API 주소 가져오기
+
   useEffect(() => {
-    setTimeout(() => {
-      setRecommendedRestaurants([
-        {
-          name: "탭샵바 합정점",
-          distance: "250m",
-          menu: [["루꼴라 치즈 떡볶이", 9900]],
-          description: "다양한 요리를 자유롭게 선택하며 분위기 좋은 공간에서 즐길 수 있는 곳!",
-          business_hours: "매일 11:00 - 24:00",
-          facilities: ["와인 페어링", "포장", "예약 가능"],
-          parking: "무료 주차 가능",
-          imageUrls: ['https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20250116_234%2F1736993517599R0Oqc_JPEG%2F%25B1%25D7%25B8%25B22.jpg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20250116_254%2F1736993510471IkD4D_JPEG%2F%25B1%25D7%25B8%25B21.jpg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20250116_205%2F1736993519045YFwkP_JPEG%2F%25B1%25D7%25B8%25B27.jpg'],
-        },
-        {
-          name: "육전국밥 홍대점",
-          distance: "50m",
-          menu: [["수육고기국밥", 15000]],
-          description: "고소하고 깊은 국물과 함께 든든한 한 끼를 즐길 수 있는 홍대 맛집!",
-          business_hours: "월-금 10:30 - 21:00",
-          facilities: ["무선 인터넷", "혼밥 가능"],
-          parking: "없음",
-          imageUrls: [],
-        },
-        {
-          name: "연남동 브런치카페",
-          distance: "150m",
-          menu: [["에그 베네딕트", 18000], ["아보카도 토스트", 16000]],
-          description: "여유로운 아침을 위한 최고의 브런치 카페!",
-          business_hours: "화-일 08:00 - 16:00",
-          facilities: ["테라스", "채식 옵션", "예약 가능"],
-          parking: "인근 공용 주차장 이용 가능",
-          imageUrls: ['https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20200214_51%2F158166848954983lgB_JPEG%2F7LjX4ZBKQYA5cY-hxdDjxKUd.jpg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20200214_111%2F15816684696149Iuwa_JPEG%2F_VSYAFAHDGNlhac8Qgie4op3.jpg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20200214_179%2F15816684694822Pjzo_JPEG%2F_gwbOUEIxQJeBVwvHY2kRusk.jpg']
-          ,
-        },
-        {
-          name: "마라탕전문점 홍대점",
-          distance: "300m",
-          menu: [["마라탕 (소)", 12000], ["마라샹궈", 25000]],
-          description: "얼얼한 마라의 매운맛을 제대로 즐길 수 있는 곳!",
-          business_hours: "매일 11:30 - 23:00",
-          facilities: ["단체석", "무선 인터넷", "포장 가능"],
-          parking: "주차 불가",
-          imageUrls: ['https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fpup-review-phinf.pstatic.net%2FMjAyMjA3MTNfNzQg%2FMDAxNjU3Njg5NDQ5NTMx.Q0i7yEHSR95XPYL3uhB2bWx7w41z4GnwR3xLUjwf9eAg.DsDeQR98UfemqUfNnvS2phF0NGYrsF7hYZ7tNHmD_usg.JPEG%2Fupload_cba91c14b2d0fd5b61a262f8a67df690.jpeg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fpup-review-phinf.pstatic.net%2FMjAyMjA4MjhfMjE2%2FMDAxNjYxNjYzMDEyNDk0.FC94z3fBtTzeILAPdQ6H9tdYXTpBAscnZl_Oz4AoLp0g.onXWRUgl3sEgd--DrarwZuBHRb787FoMDrIxRlJEl-og.JPEG%2FC4CCB4B6-94E7-4208-AC04-DB004062F93C.jpeg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fpup-review-phinf.pstatic.net%2FMjAyMjA5MTFfMjEw%2FMDAxNjYyOTAyMjMyNzYw.PEt9nTTXWjW5m7HXRhklNZc7Hmjjt8WacEE15lLJJWsg.FsnbdFY1Lm75u8Dee8GuBPhTZFCibpu6QyX_2BkOPwcg.JPEG%2F296B949A-BDB8-4573-BDFD-2CC3EB361D53.jpeg']
-          ,
-        },
-        {
-          name: "신촌 수제버거 맛집",
-          distance: "500m",
-          menu: [["더블 치즈버거", 12000], ["감자튀김", 5000]],
-          description: "수제 패티의 깊은 맛을 느낄 수 있는 수제버거 전문점!",
-          business_hours: "월-토 11:00 - 22:00, 일 휴무",
-          facilities: ["반려동물 동반 가능", "테이크아웃 가능"],
-          parking: "인근 공용 주차장 이용 가능",
-          imageUrls: ['https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220817_125%2F1660741016108Bw9aN_JPEG%2F193A88C5-1209-46DD-8BBC-160804F9FAC9.jpeg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220817_38%2F1660741017049vEFNr_JPEG%2F4ED6F6FD-870A-4DA4-9199-06105656783C.jpeg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220817_154%2F1660741015571LbPPM_JPEG%2F28D8FAE3-1E36-46A3-B5C2-FD81072A7A77.jpeg']
-          ,
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
+    // setTimeout(() => {
+    //   setRecommendedRestaurants([
+    //     {
+    //       name: "탭샵바 합정점",
+    //       distance: "250m",
+    //       menu: [["루꼴라 치즈 떡볶이", 9900]],
+    //       description: "다양한 요리를 자유롭게 선택하며 분위기 좋은 공간에서 즐길 수 있는 곳!",
+    //       business_hours: "매일 11:00 - 24:00",
+    //       facilities: ["와인 페어링", "포장", "예약 가능"],
+    //       parking: "무료 주차 가능",
+    //       imageUrls: ['https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20250116_234%2F1736993517599R0Oqc_JPEG%2F%25B1%25D7%25B8%25B22.jpg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20250116_254%2F1736993510471IkD4D_JPEG%2F%25B1%25D7%25B8%25B21.jpg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20250116_205%2F1736993519045YFwkP_JPEG%2F%25B1%25D7%25B8%25B27.jpg'],
+    //     },
+    //     {
+    //       name: "육전국밥 홍대점",
+    //       distance: "50m",
+    //       menu: [["수육고기국밥", 15000]],
+    //       description: "고소하고 깊은 국물과 함께 든든한 한 끼를 즐길 수 있는 홍대 맛집!",
+    //       business_hours: "월-금 10:30 - 21:00",
+    //       facilities: ["무선 인터넷", "혼밥 가능"],
+    //       parking: "없음",
+    //       imageUrls: [],
+    //     },
+    //     {
+    //       name: "연남동 브런치카페",
+    //       distance: "150m",
+    //       menu: [["에그 베네딕트", 18000], ["아보카도 토스트", 16000]],
+    //       description: "여유로운 아침을 위한 최고의 브런치 카페!",
+    //       business_hours: "화-일 08:00 - 16:00",
+    //       facilities: ["테라스", "채식 옵션", "예약 가능"],
+    //       parking: "인근 공용 주차장 이용 가능",
+    //       imageUrls: ['https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20200214_51%2F158166848954983lgB_JPEG%2F7LjX4ZBKQYA5cY-hxdDjxKUd.jpg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20200214_111%2F15816684696149Iuwa_JPEG%2F_VSYAFAHDGNlhac8Qgie4op3.jpg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20200214_179%2F15816684694822Pjzo_JPEG%2F_gwbOUEIxQJeBVwvHY2kRusk.jpg']
+    //       ,
+    //     },
+    //     {
+    //       name: "마라탕전문점 홍대점",
+    //       distance: "300m",
+    //       menu: [["마라탕 (소)", 12000], ["마라샹궈", 25000]],
+    //       description: "얼얼한 마라의 매운맛을 제대로 즐길 수 있는 곳!",
+    //       business_hours: "매일 11:30 - 23:00",
+    //       facilities: ["단체석", "무선 인터넷", "포장 가능"],
+    //       parking: "주차 불가",
+    //       imageUrls: ['https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fpup-review-phinf.pstatic.net%2FMjAyMjA3MTNfNzQg%2FMDAxNjU3Njg5NDQ5NTMx.Q0i7yEHSR95XPYL3uhB2bWx7w41z4GnwR3xLUjwf9eAg.DsDeQR98UfemqUfNnvS2phF0NGYrsF7hYZ7tNHmD_usg.JPEG%2Fupload_cba91c14b2d0fd5b61a262f8a67df690.jpeg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fpup-review-phinf.pstatic.net%2FMjAyMjA4MjhfMjE2%2FMDAxNjYxNjYzMDEyNDk0.FC94z3fBtTzeILAPdQ6H9tdYXTpBAscnZl_Oz4AoLp0g.onXWRUgl3sEgd--DrarwZuBHRb787FoMDrIxRlJEl-og.JPEG%2FC4CCB4B6-94E7-4208-AC04-DB004062F93C.jpeg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fpup-review-phinf.pstatic.net%2FMjAyMjA5MTFfMjEw%2FMDAxNjYyOTAyMjMyNzYw.PEt9nTTXWjW5m7HXRhklNZc7Hmjjt8WacEE15lLJJWsg.FsnbdFY1Lm75u8Dee8GuBPhTZFCibpu6QyX_2BkOPwcg.JPEG%2F296B949A-BDB8-4573-BDFD-2CC3EB361D53.jpeg']
+    //       ,
+    //     },
+    //     {
+    //       name: "신촌 수제버거 맛집",
+    //       distance: "500m",
+    //       menu: [["더블 치즈버거", 12000], ["감자튀김", 5000]],
+    //       description: "수제 패티의 깊은 맛을 느낄 수 있는 수제버거 전문점!",
+    //       business_hours: "월-토 11:00 - 22:00, 일 휴무",
+    //       facilities: ["반려동물 동반 가능", "테이크아웃 가능"],
+    //       parking: "인근 공용 주차장 이용 가능",
+    //       imageUrls: ['https://search.pstatic.net/common/?autoRotate=true&type=w560_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220817_125%2F1660741016108Bw9aN_JPEG%2F193A88C5-1209-46DD-8BBC-160804F9FAC9.jpeg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220817_38%2F1660741017049vEFNr_JPEG%2F4ED6F6FD-870A-4DA4-9199-06105656783C.jpeg', 'https://search.pstatic.net/common/?autoRotate=true&type=w278_sharpen&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220817_154%2F1660741015571LbPPM_JPEG%2F28D8FAE3-1E36-46A3-B5C2-FD81072A7A77.jpeg']
+    //       ,
+    //     },
+    //   ]);
+    //   setLoading(false);
+    // }, 1000);
     // 🔥 검색 기록을 로컬스토리지에서 불러오기
     const history = JSON.parse(localStorage.getItem("searchHistory") || "[]");
     console.log("Loaded search history from localStorage:", history); // ✅ Debugging log
@@ -83,7 +85,7 @@ const RecommendationsPage = () => {
       const latestQuery = history[0].keyword;
 
       // ✅ 백엔드에 요청 (현재는 Mock 데이터 사용)
-      fetch(`/api/search?query=${latestQuery}`)
+      fetch(`${API_URL}/search?query=${latestQuery}`)
         .then((res) => res.json())
         .then((data) => {
           console.log("Fetched recommendations:", data);
@@ -93,7 +95,7 @@ const RecommendationsPage = () => {
             setRecommendedRestaurants(data);
 
             // ✅ 검색 기록 업데이트 (결과 저장)
-            const updatedHistory = history.map((entry) =>
+            const updatedHistory = history.map((entry: any) =>
               entry.keyword === latestQuery ? { ...entry, results: data } : entry
             );
 
@@ -105,7 +107,7 @@ const RecommendationsPage = () => {
         });
     }    
       
-  }, []);
+  }, [API_URL]);
 
 
   // 🔥 Open Popup Function

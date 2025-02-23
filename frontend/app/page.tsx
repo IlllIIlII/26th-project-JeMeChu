@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
-
+// 연결 url
 const API_URL = process.env.NEXT_PUBLIC_API; // 환경 변수에서 API 주소 가져오기
 
 const Home = () => {
