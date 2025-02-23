@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
+import { parseRestaurantData } from "./utils/parseRestaurantData";
 // 연결 url
 const API_URL = process.env.NEXT_PUBLIC_API; // 환경 변수에서 API 주소 가져오기
 
@@ -61,12 +62,19 @@ const Home = () => {
         },
         body: JSON.stringify(requestBody),
       });
-      console.log("🚀 검색 요청 결과:", response);
+
+      const responseData = await response.json();
+      console.log("🚀 검색 요청 결과:", responseData);
+      
+      const parsedResults = responseData.map((restaurant: any) =>
+        parseRestaurantData(restaurant)
+      );
+
       // ✅ 기존 검색 기록 불러오기
       const previousHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
 
       // ✅ 새 검색 기록 추가 (결과 없이 details만만 저장)
-      const newEntry = { keyword: details, results: [] };
+      const newEntry = { keyword: details, results: parsedResults };
       const updatedHistory = [newEntry, ...previousHistory].slice(0, 10); // 최근 10개 기록 유지
 
       // ✅ 검색 기록을 로컬 스토리지에 저장

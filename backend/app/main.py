@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from backend.app.restaurant_filter import RestaurantFilter
-from restaurant_filter import RestaurantFilter
-from rag import RAGEngine
+# from restaurant_filter import RestaurantFilter
+from backend.app.rag import RAGEngine
+# from rag import RAGEngine
 import json
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +11,15 @@ app = FastAPI()
 
 restaurant_filter = RestaurantFilter()
 rag_engine = RAGEngine()
+
+# CORS 설정: 모든 도메인을 허용하거나, 특정 도메인만 허용
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # 또는 "*"로 모든 도메인 허용
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class FilterRequest(BaseModel):
     ctgy: str      # 카테고리
