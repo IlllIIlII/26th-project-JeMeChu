@@ -10,7 +10,8 @@ import ast
 import math
 import geocoder
 import requests
-from distance_utils import get_current_location, calculate_distance
+from backend.app.distance_utils import get_current_location, calculate_distance
+# from distance_utils import get_current_location, calculate_distance
 
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI

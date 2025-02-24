@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from restaurant_filter import RestaurantFilter
-from rag import RAGEngine
+from backend.app.restaurant_filter import RestaurantFilter
+# from restaurant_filter import RestaurantFilter
+from backend.app.rag import RAGEngine
+# from rag import RAGEngine
 import json
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +12,15 @@ app = FastAPI()
 restaurant_filter = RestaurantFilter()
 rag_engine = RAGEngine()
 
+# CORS 설정: 모든 도메인을 허용하거나, 특정 도메인만 허용
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # 또는 "*"로 모든 도메인 허용
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class FilterRequest(BaseModel):
     ctgy: str      # 카테고리
     details: str   # 세부사항 (태그 확장을 위한 입력)
@@ -17,6 +28,7 @@ class FilterRequest(BaseModel):
 
 @app.post("/filter_restaurants/")
 async def filter_restaurants(request: FilterRequest):
+    print("Received data: ", request)
     """
     1. restaurant_filter 모듈을 이용해
        - 카테고리 필터링 → 운영시간 필터링 → 태그 기반 2차 필터링을 수행하여 최종 식당 id 리스트를 도출합니다.
